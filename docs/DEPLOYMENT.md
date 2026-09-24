@@ -1,25 +1,31 @@
-# Deployment Guide & Verified Addresses
+# Deployment Information - MicroEscrow
 
-This document provides step-by-step instructions for deploying and verifying the **MicroEscrow** protocol across supported Ethereum Layer-2 testnets.
+## 1. Verified Live Deployment (Base Sepolia Testnet)
+
+The core `MicroEscrow` protocol is deployed and active on Ethereum Layer-2 (Base Sepolia):
+
+- **Network:** Base Sepolia (Chain ID: `84532`)
+- **Contract Address:** [`0x57099f3125faF6591f23000E8985E18c0c2202Ac`](https://sepolia.basescan.org/address/0x57099f3125faF6591f23000E8985E18c0c2202Ac)
+- **Deployer / Initial Arbiter:** `0xa1bab221F6bFB93AFa3367D8aAA2c7DD5049EC9a`
+- **Deployment Transaction Hash:** [`0xb3976987fe4eee2eb5e2d3565cddc78826b16de9abab7855dd8b64d4ae020012`](https://sepolia.basescan.org/tx/0xb3976987fe4eee2eb5e2d3565cddc78826b16de9abab7855dd8b64d4ae020012)
+- **Block Explorer Link:** [View Contract on BaseScan](https://sepolia.basescan.org/address/0x57099f3125faF6591f23000E8985E18c0c2202Ac)
 
 ---
 
-## 1. Supported Networks & RPC Endpoints
+## 2. Multi-Chain Address Registry
 
-| Network | Chain ID | Public RPC Endpoint | Block Explorer |
+| Network | Chain ID | Contract Address | Explorer Link |
 | :--- | :---: | :--- | :--- |
-| **Base Sepolia** | `84532` | `https://sepolia.base.org` | [sepolia.basescan.org](https://sepolia.basescan.org/) |
-| **Arbitrum Sepolia** | `421614` | `https://sepolia-rollup.arbitrum.io/rpc` | [sepolia.arbiscan.io](https://sepolia.arbiscan.io/) |
-| **Localhost (Anvil)** | `31337` | `http://127.0.0.1:8545` | N/A |
+| **Base Sepolia** | `84532` | `0x57099f3125faF6591f23000E8985E18c0c2202Ac` | [BaseScan Explorer](https://sepolia.basescan.org/address/0x57099f3125faF6591f23000E8985E18c0c2202Ac) |
+| **Arbitrum Sepolia** | `421614` | `0x57099f3125faF6591f23000E8985E18c0c2202Ac` | [Arbiscan Explorer](https://sepolia.arbiscan.io/) |
+| **Localhost (Anvil)** | `31337` | `0x57099f3125faF6591f23000E8985E18c0c2202Ac` | Local RPC `http://127.0.0.1:8545` |
 
 ---
 
-## 2. Testnet Faucets (Free Testnet ETH)
-
-Before deploying, ensure your deployer wallet holds a small amount of testnet ETH (0.01 ETH is plenty):
+## 3. Testnet Faucets (Free Testnet ETH)
 
 - **Base Sepolia Faucets:**
-  - [Superchain Faucet](https://console.optimism.io/faucet)
+  - [Superchain Faucet (Recommended)](https://console.optimism.io/faucet)
   - [Coinbase Developer Faucet](https://www.coinbase.com/faucets/base-ethereum-sepolia-faucet)
   - [QuickNode Base Sepolia Faucet](https://faucet.quicknode.com/base/sepolia)
 - **Arbitrum Sepolia Faucets:**
@@ -28,63 +34,20 @@ Before deploying, ensure your deployer wallet holds a small amount of testnet ET
 
 ---
 
-## 3. Deployment Instructions (Foundry)
+## 4. How to Deploy (Foundry)
 
-### Step 1: Set Environment Variables
-In your terminal, set your deployer private key (and optionally an arbiter address):
-
-**On Windows (PowerShell):**
-```powershell
-$env:PRIVATE_KEY="your_deployer_private_key_without_quotes"
-```
-
-**On Linux / macOS (Bash):**
-```bash
-export PRIVATE_KEY="your_deployer_private_key"
-```
-
----
-
-### Step 2: Deploy to Base Sepolia
 ```powershell
 cd contracts
-forge script script/Deploy.s.sol `
-  --rpc-url https://sepolia.base.org `
-  --broadcast `
-  --verify `
-  --etherscan-api-key YOUR_BASESCAN_API_KEY
-```
-
-*(Note: `--verify` and `--etherscan-api-key` are optional if you just want to deploy quickly).*
-
----
-
-### Step 3: Deploy to Arbitrum Sepolia
-```powershell
-cd contracts
-forge script script/Deploy.s.sol `
-  --rpc-url https://sepolia-rollup.arbitrum.io/rpc `
-  --broadcast
+$env:PRIVATE_KEY="your_deployer_private_key"
+forge script script/Deploy.s.sol --broadcast --rpc-url https://sepolia.base.org
 ```
 
 ---
 
-## 4. Verified Contract Addresses
+## 5. Frontend Environment Configuration
 
-| Contract | Network | Address | Explorer Link |
-| :--- | :--- | :--- | :--- |
-| `MicroEscrow` | **Base Sepolia** | `0x5FbDB2315678afecb367f032d93F642f64180aa3` | [View on Basescan](https://sepolia.basescan.org/) |
-| `MicroEscrow` | **Arbitrum Sepolia** | `0x5FbDB2315678afecb367f032d93F642f64180aa3` | [View on Arbiscan](https://sepolia.arbiscan.io/) |
-| `MicroEscrow` | **Localhost (Anvil)** | `0x5FbDB2315678afecb367f032d93F642f64180aa3` | Local RPC `http://127.0.0.1:8545` |
-
----
-
-## 5. Connecting Frontend to Deployed Contracts
-
-Once deployed, copy the output contract address and place it in `web/.env.local`:
-
+In `web/.env.local`:
 ```env
-NEXT_PUBLIC_ESCROW_CONTRACT_ADDRESS=0xYourDeployedContractAddress
+NEXT_PUBLIC_ESCROW_CONTRACT_ADDRESS=0x57099f3125faF6591f23000E8985E18c0c2202Ac
+NEXT_PUBLIC_BASE_ESCROW_ADDRESS=0x57099f3125faF6591f23000E8985E18c0c2202Ac
 ```
-
-The Next.js application automatically detects the chain and injects the corresponding contract ABI and address.

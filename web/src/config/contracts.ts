@@ -5,14 +5,14 @@ import { arbitrumSepolia, baseSepolia, localhost } from "viem/chains";
  * @notice Multi-chain contract address registry
  */
 export const ESCROW_CONTRACT_ADDRESSES: Record<number, Address> = {
-  [localhost.id]: (process.env.NEXT_PUBLIC_ESCROW_CONTRACT_ADDRESS ||
-    "0x5FbDB2315678afecb367f032d93F642f64180aa3") as Address,
-  [arbitrumSepolia.id]: (process.env.NEXT_PUBLIC_ARBITRUM_ESCROW_ADDRESS ||
-    process.env.NEXT_PUBLIC_ESCROW_CONTRACT_ADDRESS ||
-    "0x0000000000000000000000000000000000000000") as Address,
   [baseSepolia.id]: (process.env.NEXT_PUBLIC_BASE_ESCROW_ADDRESS ||
     process.env.NEXT_PUBLIC_ESCROW_CONTRACT_ADDRESS ||
-    "0x0000000000000000000000000000000000000000") as Address,
+    "0x57099f3125faF6591f23000E8985E18c0c2202Ac") as Address,
+  [arbitrumSepolia.id]: (process.env.NEXT_PUBLIC_ARBITRUM_ESCROW_ADDRESS ||
+    process.env.NEXT_PUBLIC_ESCROW_CONTRACT_ADDRESS ||
+    "0x57099f3125faF6591f23000E8985E18c0c2202Ac") as Address,
+  [localhost.id]: (process.env.NEXT_PUBLIC_ESCROW_CONTRACT_ADDRESS ||
+    "0x57099f3125faF6591f23000E8985E18c0c2202Ac") as Address,
 };
 
 /**
@@ -22,8 +22,8 @@ export function getEscrowContractAddress(chainId?: number): Address {
   if (chainId && ESCROW_CONTRACT_ADDRESSES[chainId]) {
     return ESCROW_CONTRACT_ADDRESSES[chainId];
   }
-  // Default to localhost or Arbitrum Sepolia
-  return ESCROW_CONTRACT_ADDRESSES[localhost.id] || ESCROW_CONTRACT_ADDRESSES[arbitrumSepolia.id];
+  // Default to Base Sepolia
+  return ESCROW_CONTRACT_ADDRESSES[baseSepolia.id];
 }
 
 /**

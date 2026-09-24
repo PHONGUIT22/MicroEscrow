@@ -162,8 +162,8 @@ forge script script/Deploy.s.sol --broadcast --rpc-url http://127.0.0.1:8545
 
 | Network | Contract Address | Explorer Link |
 | :--- | :--- | :--- |
-| **Arbitrum Sepolia** | `0x5FbDB2315678afecb367f032d93F642f64180aa3` | [View on Arbiscan](https://sepolia.arbiscan.io/) |
-| **Base Sepolia** | `0x5FbDB2315678afecb367f032d93F642f64180aa3` | [View on Basescan](https://sepolia.basescan.org/) |
+| **Base Sepolia (Live)** | `0x57099f3125faF6591f23000E8985E18c0c2202Ac` | [View on BaseScan](https://sepolia.basescan.org/address/0x57099f3125faF6591f23000E8985E18c0c2202Ac) |
+| **Arbitrum Sepolia** | `0x57099f3125faF6591f23000E8985E18c0c2202Ac` | [View on Arbiscan](https://sepolia.arbiscan.io/) |
 
 ---
 
