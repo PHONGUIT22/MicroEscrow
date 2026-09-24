@@ -2,7 +2,16 @@
 
 import { useState } from "react";
 import { useAccount } from "wagmi";
-import { CheckCircle2, AlertTriangle, Send, Loader2, Sparkles, AlertCircle } from "lucide-react";
+import {
+  CheckCircle2,
+  AlertTriangle,
+  Send,
+  Loader2,
+  AlertCircle,
+  Coins,
+  ShieldCheck,
+  RefreshCcw,
+} from "lucide-react";
 import { EscrowItem, EscrowStatus } from "@/types/escrow";
 import { useGaslessAction } from "@/hooks/useGaslessAction";
 
@@ -60,7 +69,7 @@ export function ActionButtons({ escrow, isGaslessEnabled, onActionSuccess }: Act
     if (success) onActionSuccess?.();
   };
 
-  // Freelancer claims funds if deadline expired and client didn't respond
+  // Timeout claim for freelancer if client disappeared after deadline
   const handleAutoClaim = async () => {
     const success = await executeAction({
       action: "releaseFunds",
@@ -70,7 +79,7 @@ export function ActionButtons({ escrow, isGaslessEnabled, onActionSuccess }: Act
     if (success) onActionSuccess?.();
   };
 
-  // Client claims timeout refund if freelancer ghosted
+  // Timeout refund for client if freelancer never submitted after deadline
   const handleTimeoutRefund = async () => {
     const success = await executeAction({
       action: "claimTimeoutRefund",
@@ -81,22 +90,22 @@ export function ActionButtons({ escrow, isGaslessEnabled, onActionSuccess }: Act
   };
 
   return (
-    <div className="w-full space-y-4">
-      {/* Error alert */}
+    <div className="space-y-4">
+      {/* Error Banner */}
       {error && (
-        <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-semibold flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          <span>{error}</span>
+        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2.5">
+          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+          <span>{error || "Action failed to execute. Please verify state."}</span>
         </div>
       )}
 
       {/* DISPUTED STATE */}
       {escrow.status === EscrowStatus.Disputed && (
-        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-center">
-          <AlertTriangle className="w-6 h-6 text-rose-500 mx-auto mb-2" />
-          <h4 className="font-bold text-neutral-900 dark:text-white text-sm">Escrow Under Arbiter Review</h4>
-          <p className="text-xs text-neutral-500 mt-1">
-            Contract funds are safely frozen. An assigned protocol arbiter will review the terms and split funds accordingly.
+        <div className="p-5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-center space-y-1 shadow-[0_0_20px_rgba(244,63,94,0.15)]">
+          <AlertTriangle className="w-6 h-6 text-rose-400 mx-auto mb-1 animate-pulse" />
+          <h4 className="font-extrabold text-white text-sm">Escrow Under Protocol Dispute Review</h4>
+          <p className="text-xs text-neutral-400 max-w-md mx-auto leading-relaxed">
+            Funds are securely frozen on-chain. An assigned protocol arbiter will review the deliverables against scope and disburse percentage allocations.
           </p>
         </div>
       )}
@@ -106,7 +115,7 @@ export function ActionButtons({ escrow, isGaslessEnabled, onActionSuccess }: Act
         <button
           onClick={() => setIsSubmitModalOpen(true)}
           disabled={isActionLoading}
-          className="w-full py-3.5 px-6 rounded-full bg-[#836EF9] hover:bg-[#725aeb] text-white font-bold text-sm shadow-lg shadow-[#836EF9]/25 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+          className="w-full py-4 px-6 rounded-full bg-gradient-to-r from-[#836EF9] to-[#5e3fee] hover:from-[#725aeb] hover:to-[#5030e2] text-white font-extrabold text-sm shadow-[0_0_20px_rgba(131,110,249,0.4)] hover:shadow-[0_0_30px_rgba(131,110,249,0.7)] flex items-center justify-center gap-2 transition-all disabled:opacity-50 border border-white/20"
         >
           {isActionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
           <span>Submit Work Deliverables</span>
@@ -119,16 +128,16 @@ export function ActionButtons({ escrow, isGaslessEnabled, onActionSuccess }: Act
           <button
             onClick={handleReleaseFunds}
             disabled={isActionLoading}
-            className="flex-1 py-3.5 px-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+            className="flex-1 py-4 px-6 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-sm shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)] flex items-center justify-center gap-2 transition-all disabled:opacity-50 border border-white/10"
           >
-            {isActionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-            <span>Approve & Release Funds</span>
+            {isActionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4 stroke-[2.5]" />}
+            <span>Approve & Release Funds (100% Payout)</span>
           </button>
 
           <button
             onClick={handleRaiseDispute}
             disabled={isActionLoading}
-            className="py-3.5 px-6 rounded-full bg-transparent hover:bg-rose-500/10 border border-rose-500/30 text-rose-600 font-bold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+            className="py-4 px-6 rounded-full bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/40 text-rose-400 font-bold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50 shadow-[0_0_15px_rgba(244,63,94,0.15)]"
           >
             <AlertTriangle className="w-4 h-4" />
             <span>Raise Dispute</span>
@@ -141,10 +150,10 @@ export function ActionButtons({ escrow, isGaslessEnabled, onActionSuccess }: Act
         <button
           onClick={handleAutoClaim}
           disabled={isActionLoading}
-          className="w-full py-3.5 px-6 rounded-full bg-[#836EF9] hover:bg-[#725aeb] text-white font-bold text-sm flex items-center justify-center gap-2"
+          className="w-full py-4 px-6 rounded-full bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-black text-sm shadow-[0_0_20px_rgba(16,185,129,0.4)] flex items-center justify-center gap-2 border border-white/20"
         >
-          <Sparkles className="w-4 h-4" />
-          <span>Deadline Elapsed: Auto-Claim Payout</span>
+          <Coins className="w-4 h-4" />
+          <span>Deadline Elapsed: Trigger Auto-Claim Payout</span>
         </button>
       )}
 
@@ -153,49 +162,57 @@ export function ActionButtons({ escrow, isGaslessEnabled, onActionSuccess }: Act
         <button
           onClick={handleTimeoutRefund}
           disabled={isActionLoading}
-          className="w-full py-3.5 px-6 rounded-full bg-neutral-900 hover:bg-neutral-800 text-white font-bold text-sm flex items-center justify-center gap-2"
+          className="w-full py-4 px-6 rounded-full bg-neutral-900 hover:bg-neutral-800 text-white font-bold text-sm flex items-center justify-center gap-2 border border-white/10 shadow-lg"
         >
-          <span>Claim Timeout Refund (No submission)</span>
+          <RefreshCcw className="w-4 h-4" />
+          <span>Claim Timeout Refund (No Submission by Deadline)</span>
         </button>
       )}
 
       {/* MODAL: SUBMIT DELIVERABLES */}
       {isSubmitModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-6 max-w-md w-full shadow-2xl">
-            <h3 className="font-extrabold text-lg text-neutral-900 dark:text-white mb-2">
-              Submit Work Deliverables
-            </h3>
-            <p className="text-xs text-neutral-500 mb-4">
-              Paste the public link to your project (GitHub PR, Figma file, Google Drive, or IPFS hash).
-            </p>
-
-            <div className="space-y-4 mb-6">
-              <div>
-                <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300 block mb-1">
-                  Deliverables URL / Proof URI *
-                </label>
-                <input
-                  type="url"
-                  placeholder="https://github.com/user/project/pull/1"
-                  value={proofURI}
-                  onChange={(e) => setProofURI(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-950 text-sm focus:outline-none focus:border-[#836EF9]"
-                />
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="glass-panel border border-purple-500/40 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-[0_0_50px_rgba(131,110,249,0.3)] space-y-5">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold uppercase mb-2">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>On-Chain Submission</span>
               </div>
+              <h3 className="font-black text-xl text-white">
+                Submit Work Deliverables
+              </h3>
+              <p className="text-xs text-neutral-400 mt-1">
+                Paste the verifiable URL to your deliverables (GitHub PR, Figma link, Google Drive, or IPFS CID).
+              </p>
             </div>
 
-            <div className="flex items-center justify-end gap-3">
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-neutral-300 block">
+                Deliverables URL / Proof URI *
+              </label>
+              <input
+                type="url"
+                required
+                placeholder="https://github.com/org/repo/pull/12"
+                value={proofURI}
+                onChange={(e) => setProofURI(e.target.value)}
+                className="w-full px-4 py-3 rounded-2xl border border-white/10 bg-neutral-950/80 text-white text-sm focus:outline-none focus:border-[#836EF9] focus:shadow-[0_0_15px_rgba(131,110,249,0.3)] transition-all font-mono"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
               <button
+                type="button"
                 onClick={() => setIsSubmitModalOpen(false)}
-                className="px-5 py-2.5 rounded-full text-sm font-semibold text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                className="px-5 py-2.5 rounded-full text-xs font-bold text-neutral-400 hover:text-white hover:bg-white/5 transition-colors"
               >
                 Cancel
               </button>
               <button
+                type="button"
                 onClick={handleSubmitWork}
                 disabled={!proofURI.trim() || isActionLoading}
-                className="px-6 py-2.5 rounded-full bg-[#836EF9] hover:bg-[#725aeb] text-white text-sm font-bold shadow-md shadow-[#836EF9]/30 disabled:opacity-50 flex items-center gap-2"
+                className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#836EF9] to-[#5e3fee] hover:from-[#725aeb] hover:to-[#5030e2] text-white text-xs font-extrabold shadow-[0_0_20px_rgba(131,110,249,0.4)] disabled:opacity-50 flex items-center gap-2 border border-white/20"
               >
                 {isActionLoading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                 <span>Confirm & Submit</span>

@@ -27,9 +27,14 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="dark">
-      <body className="min-h-screen flex flex-col bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-50 antialiased selection:bg-[#836EF9]/30 selection:text-[#836EF9]">
-        {/* Subtle Background Grid Pattern */}
-        <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#262626_1px,transparent_1px)] [background-size:24px_24px] opacity-60 z-0" />
+      <body className="min-h-screen flex flex-col bg-[#07070a] text-neutral-100 antialiased selection:bg-[#836EF9]/40 selection:text-white relative">
+        {/* Neon Ambient Lighting Orbs */}
+        <div className="fixed top-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full bg-[#836EF9]/15 blur-[120px] pointer-events-none z-0" />
+        <div className="fixed top-[20%] right-[-10%] w-[450px] h-[450px] rounded-full bg-cyan-500/10 blur-[130px] pointer-events-none z-0" />
+        <div className="fixed bottom-[-10%] left-[20%] w-[600px] h-[500px] rounded-full bg-violet-600/10 blur-[150px] pointer-events-none z-0" />
+
+        {/* Ambient Subtle Cyber Grid */}
+        <div className="fixed inset-0 cyber-grid opacity-60 pointer-events-none z-0" />
 
         <WagmiProvider config={config}>
           <QueryClientProvider client={queryClient}>

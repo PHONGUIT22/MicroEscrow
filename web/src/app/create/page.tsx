@@ -3,14 +3,25 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAccount } from "wagmi";
-import { Shield, Sparkles, Loader2, CheckCircle2, ArrowLeft, AlertCircle } from "lucide-react";
+import {
+  Shield,
+  ShieldCheck,
+  Loader2,
+  CheckCircle2,
+  ArrowLeft,
+  Zap,
+  Lock,
+  Clock,
+  Coins,
+  AlertCircle,
+} from "lucide-react";
 import Link from "next/link";
 import { useCreateEscrow } from "@/hooks/useCreateEscrow";
 
 export default function CreateEscrowPage() {
   const router = useRouter();
   const { isConnected } = useAccount();
-  const { createEscrow, isAwaitingWallet, isConfirming, isSuccess, txHash, error, reset } = useCreateEscrow();
+  const { createEscrow, isAwaitingWallet, isConfirming, isSuccess, txHash, error } = useCreateEscrow();
 
   const [formData, setFormData] = useState({
     freelancerAddress: "",
@@ -33,145 +44,194 @@ export default function CreateEscrowPage() {
   const isLoading = isAwaitingWallet || isConfirming;
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8 py-6">
+    <div className="max-w-4xl mx-auto space-y-8 py-6 relative z-10">
       <Link
         href="/dashboard"
-        className="inline-flex items-center gap-2 text-sm font-semibold text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors"
+        className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-neutral-400 hover:text-white transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>Back to Dashboard</span>
       </Link>
 
       <div className="space-y-2">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#836EF9]/10 border border-[#836EF9]/30 text-[#836EF9] text-xs font-bold uppercase tracking-wider shadow-[0_0_12px_rgba(131,110,249,0.2)]">
+          <Lock className="w-3.5 h-3.5" />
+          <span>Non-Custodial Milestone Agreement</span>
+        </div>
+        <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
           Create Milestone Escrow
         </h1>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400">
-          Lock payment into a decentralized escrow contract. Funds are released only after deliverables are inspected.
+        <p className="text-sm text-neutral-400 max-w-xl">
+          Deposit and lock milestone funds into the smart contract. The freelancer receives payment once deliverables are reviewed or automatically if the review deadline elapses.
         </p>
       </div>
 
       {/* Success Notification */}
       {isSuccess && (
-        <div className="p-6 rounded-3xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 space-y-2">
+        <div className="p-6 rounded-3xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 space-y-2 shadow-[0_0_25px_rgba(16,185,129,0.2)]">
           <div className="flex items-center gap-2 font-bold text-base">
-            <CheckCircle2 className="w-5 h-5" />
-            <span>Escrow successfully created on-chain!</span>
+            <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+            <span>Escrow successfully created and funded on-chain!</span>
           </div>
-          <p className="text-xs text-neutral-400">
-            Tx Hash: <span className="font-mono">{txHash}</span>. Redirecting to your dashboard...
+          <p className="text-xs text-neutral-300">
+            Tx Hash: <span className="font-mono text-emerald-300">{txHash}</span>. Redirecting to your dashboard...
           </p>
         </div>
       )}
 
       {/* Error Notification */}
       {error && (
-        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-semibold flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          <span>{error}</span>
+        <div className="p-5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-3">
+          <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
+          <span>{error || "Failed to initialize escrow transaction."}</span>
         </div>
       )}
 
-      {/* Form Container */}
-      <form
-        onSubmit={handleSubmit}
-        className="p-8 rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 space-y-6 shadow-xl shadow-neutral-950/5"
-      >
-        {/* Milestone Title */}
-        <div className="space-y-1.5">
-          <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
-            Milestone Title *
-          </label>
-          <input
-            type="text"
-            required
-            placeholder="e.g., Responsive Landing Page Development"
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            className="w-full px-4 py-3 rounded-2xl border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-950 text-sm focus:outline-none focus:border-[#836EF9]"
-          />
-        </div>
-
-        {/* Freelancer Address */}
-        <div className="space-y-1.5">
-          <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
-            Freelancer Wallet Address *
-          </label>
-          <input
-            type="text"
-            required
-            placeholder="0x71C...3a9"
-            value={formData.freelancerAddress}
-            onChange={(e) => setFormData({ ...formData, freelancerAddress: e.target.value })}
-            className="w-full px-4 py-3 rounded-2xl border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-950 font-mono text-sm focus:outline-none focus:border-[#836EF9]"
-          />
-        </div>
-
-        {/* Amount & Duration Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Form Column */}
+        <form onSubmit={handleSubmit} className="lg:col-span-2 space-y-6 glass-card p-6 sm:p-8 rounded-3xl border border-white/10">
+          {/* Project Title */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
-              Escrow Deposit (ETH) *
+            <label className="text-xs font-extrabold uppercase tracking-wider text-neutral-300">
+              Milestone Title
             </label>
             <input
-              type="number"
-              step="0.0001"
+              type="text"
               required
-              placeholder="0.05"
-              value={formData.amountEth}
-              onChange={(e) => setFormData({ ...formData, amountEth: e.target.value })}
-              className="w-full px-4 py-3 rounded-2xl border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-950 text-sm focus:outline-none focus:border-[#836EF9]"
+              placeholder="e.g. Next.js DApp Frontend & Viem Integration"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              className="w-full px-4 py-3 rounded-2xl border border-white/10 bg-neutral-950/80 text-white text-sm focus:outline-none focus:border-[#836EF9] focus:shadow-[0_0_15px_rgba(131,110,249,0.3)] transition-all"
             />
           </div>
 
+          {/* Freelancer Address */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
-              Review Duration (Days) *
+            <label className="text-xs font-extrabold uppercase tracking-wider text-neutral-300">
+              Freelancer Wallet Address (Receiver)
             </label>
             <input
-              type="number"
-              min="1"
+              type="text"
               required
-              value={formData.durationInDays}
-              onChange={(e) => setFormData({ ...formData, durationInDays: parseInt(e.target.value) || 1 })}
-              className="w-full px-4 py-3 rounded-2xl border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-950 text-sm focus:outline-none focus:border-[#836EF9]"
+              placeholder="0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+              value={formData.freelancerAddress}
+              onChange={(e) => setFormData({ ...formData, freelancerAddress: e.target.value })}
+              className="w-full px-4 py-3 rounded-2xl border border-white/10 bg-neutral-950/80 text-white font-mono text-sm focus:outline-none focus:border-[#836EF9] focus:shadow-[0_0_15px_rgba(131,110,249,0.3)] transition-all"
             />
           </div>
-        </div>
 
-        {/* Work Scope / Terms */}
-        <div className="space-y-1.5">
-          <label className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
-            Work Scope & Acceptance Criteria
-          </label>
-          <textarea
-            rows={4}
-            placeholder="Specify expectations, PR requirements, or links to Figma / GitHub issues..."
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className="w-full px-4 py-3 rounded-2xl border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-950 text-sm focus:outline-none focus:border-[#836EF9]"
-          />
-        </div>
+          {/* Amount & Duration */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-neutral-300 flex items-center justify-between">
+                <span>Milestone Amount</span>
+                <span className="text-[#836EF9] font-bold">ETH</span>
+              </label>
+              <input
+                type="number"
+                step="0.001"
+                min="0.001"
+                required
+                placeholder="0.25"
+                value={formData.amountEth}
+                onChange={(e) => setFormData({ ...formData, amountEth: e.target.value })}
+                className="w-full px-4 py-3 rounded-2xl border border-white/10 bg-neutral-950/80 text-white text-sm font-mono focus:outline-none focus:border-[#836EF9] focus:shadow-[0_0_15px_rgba(131,110,249,0.3)] transition-all"
+              />
+            </div>
 
-        {/* Submit CTA */}
-        <button
-          type="submit"
-          disabled={!isConnected || isLoading}
-          className="w-full py-4 rounded-full bg-[#836EF9] hover:bg-[#725aeb] text-white font-extrabold text-base shadow-xl shadow-[#836EF9]/25 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin" />
-              <span>{isAwaitingWallet ? "Confirm in Wallet..." : "Broadcasting Transaction..."}</span>
-            </>
-          ) : (
-            <>
-              <Shield className="w-5 h-5" />
-              <span>Fund & Initialize Escrow</span>
-            </>
-          )}
-        </button>
-      </form>
+            <div className="space-y-1.5">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-neutral-300 flex items-center justify-between">
+                <span>Review Deadline</span>
+                <span className="text-cyan-400 font-bold">{formData.durationInDays} Days</span>
+              </label>
+              <select
+                value={formData.durationInDays}
+                onChange={(e) => setFormData({ ...formData, durationInDays: Number(e.target.value) })}
+                className="w-full px-4 py-3 rounded-2xl border border-white/10 bg-neutral-950/80 text-white text-sm focus:outline-none focus:border-[#836EF9] focus:shadow-[0_0_15px_rgba(131,110,249,0.3)] transition-all"
+              >
+                <option value={3}>3 Days (Urgent Sprint)</option>
+                <option value={7}>7 Days (Standard Milestone)</option>
+                <option value={14}>14 Days (Large Feature)</option>
+                <option value={30}>30 Days (Full Project)</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Work Scope / Terms */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-extrabold uppercase tracking-wider text-neutral-300">
+              Work Scope & Acceptance Criteria
+            </label>
+            <textarea
+              rows={4}
+              placeholder="Specify deliverable links, PR expectations, or Figma specs..."
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="w-full px-4 py-3 rounded-2xl border border-white/10 bg-neutral-950/80 text-white text-sm focus:outline-none focus:border-[#836EF9] focus:shadow-[0_0_15px_rgba(131,110,249,0.3)] transition-all"
+            />
+          </div>
+
+          {/* Submit CTA */}
+          <button
+            type="submit"
+            disabled={!isConnected || isLoading}
+            className="w-full py-4 rounded-full bg-gradient-to-r from-[#836EF9] to-[#5e3fee] hover:from-[#725aeb] hover:to-[#5030e2] text-white font-black text-sm shadow-[0_0_25px_rgba(131,110,249,0.5)] hover:shadow-[0_0_35px_rgba(131,110,249,0.8)] disabled:opacity-50 transition-all duration-300 flex items-center justify-center gap-2 border border-white/20"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                <span>{isAwaitingWallet ? "Confirm in Wallet..." : "Broadcasting Transaction..."}</span>
+              </>
+            ) : (
+              <>
+                <ShieldCheck className="w-5 h-5 stroke-[2.5]" />
+                <span>Deposit & Lock Milestone Funds</span>
+              </>
+            )}
+          </button>
+        </form>
+
+        {/* Live Summary Sidebar */}
+        <div className="space-y-6">
+          <div className="glass-panel p-6 rounded-3xl border border-white/10 space-y-5">
+            <h3 className="font-extrabold text-white text-base flex items-center gap-2">
+              <Coins className="w-4 h-4 text-[#836EF9]" />
+              Milestone Summary
+            </h3>
+
+            <div className="space-y-3 text-xs divide-y divide-white/5">
+              <div className="flex justify-between pt-1">
+                <span className="text-neutral-400">Locked Deposit:</span>
+                <span className="font-bold text-white font-mono">
+                  {formData.amountEth || "0.00"} ETH
+                </span>
+              </div>
+              <div className="flex justify-between pt-3">
+                <span className="text-neutral-400">Platform Commission:</span>
+                <span className="font-bold text-emerald-400 font-mono">0.00 ETH (0%)</span>
+              </div>
+              <div className="flex justify-between pt-3">
+                <span className="text-neutral-400">Freelancer Gas Cost:</span>
+                <span className="font-bold text-cyan-400 font-mono">$0.00 (Gasless)</span>
+              </div>
+              <div className="flex justify-between pt-3">
+                <span className="text-neutral-400">Review Window:</span>
+                <span className="font-bold text-white">{formData.durationInDays} Days</span>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-neutral-950/70 border border-white/5 space-y-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
+                <ShieldCheck className="w-4 h-4" />
+                <span>Automated Protection</span>
+              </div>
+              <p className="text-[11px] text-neutral-400 leading-relaxed">
+                If deliverables are submitted and you do not respond before the deadline, the contract automatically releases funds to the contractor.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
