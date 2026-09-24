@@ -29,7 +29,7 @@ Student freelancers entering the gig economy face three crippling barriers:
 
 **MicroEscrow** is a decentralized, milestone-based escrow dApp tailored for student freelancers and micro-grants:
 - **Zero-Gas Submissions (ERC-4337 / EIP-712 Meta-Transactions):** Freelancers can sign work submission proofs off-chain with an empty wallet balance; the platform relayer or client sponsors the gas execution.
-- **Milestone Fund Locking:** Clients deposit project funds into an immutable smart contract before work starts, guaranteeing that funding is secured.
+- **Milestone Fund Locking:** Clients deposit project funds into an immuxtable smart contract before work starts, guaranteeing that funding is secured.
 - **Automated Deadline Protection:** If a client goes unresponsive after a deliverable deadline passes, freelancers can trigger an automated release.
 - **Fair Dispute Mediation:** Disputed deliverables can be resolved transparently by a designated arbiter with customizable percentage splits.
 - **0% Platform Rent-Seeking:** Peer-to-peer smart contract settlement without predatory 20% middleman cuts.
