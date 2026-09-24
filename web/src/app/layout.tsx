@@ -27,7 +27,18 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="dark">
-      <body className="min-h-screen flex flex-col bg-[#07070a] text-neutral-100 antialiased selection:bg-[#836EF9]/40 selection:text-white relative">
+      <head>
+        <title>MicroEscrow — Gasless Web3 Escrow Protocol</title>
+        <meta
+          name="description"
+          content="Decentralized trustless milestone escrow protocol engineered for student builders on Base Sepolia."
+        />
+        <meta name="theme-color" content="#836EF9" />
+        <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+        <link rel="shortcut icon" href="/logo.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/logo.svg" />
+      </head>
+      <body className="min-h-screen flex flex-col bg-[#07070a] text-neutral-100 antialiased selection:bg-[#836EF9]/40 selection:text-white relative pb-16 md:pb-0">
         {/* Neon Ambient Lighting Orbs */}
         <div className="fixed top-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full bg-[#836EF9]/15 blur-[120px] pointer-events-none z-0" />
         <div className="fixed top-[20%] right-[-10%] w-[450px] h-[450px] rounded-full bg-cyan-500/10 blur-[130px] pointer-events-none z-0" />
