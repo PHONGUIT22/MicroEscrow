@@ -14,6 +14,7 @@ import {
   Clock,
   Coins,
   AlertCircle,
+  FileCheck2,
 } from "lucide-react";
 import Link from "next/link";
 import { useCreateEscrow } from "@/hooks/useCreateEscrow";
@@ -30,6 +31,24 @@ export default function CreateEscrowPage() {
     title: "",
     description: "",
   });
+
+  const [isAutoFilled, setIsAutoFilled] = useState(false);
+
+  /**
+   * @notice Auto-fills pre-configured hackathon demo data for rapid testing
+   */
+  const handleAutoFill = () => {
+    setFormData({
+      title: "Next.js DApp Frontend & Viem Integration",
+      freelancerAddress: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+      amountEth: "0.0001",
+      durationInDays: 7,
+      description:
+        "Develop a responsive dark-themed Next.js 14 landing page with Wagmi v2 wallet integration. Code must pass all ESLint checks. Please submit the GitHub PR link for final review.",
+    });
+    setIsAutoFilled(true);
+    setTimeout(() => setIsAutoFilled(false), 2000);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,7 +108,31 @@ export default function CreateEscrowPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Form Column */}
-        <form onSubmit={handleSubmit} className="lg:col-span-2 space-y-6 glass-card p-6 sm:p-8 rounded-3xl border border-white/10">
+        <form onSubmit={handleSubmit} className="lg:col-span-2 space-y-6 glass-card p-6 sm:p-8 rounded-3xl border border-white/10 relative">
+          {/* Form Header with Quick Fill Demo Button */}
+          <div className="flex items-center justify-between pb-3 border-b border-white/5">
+            <div className="flex items-center gap-2">
+              <Shield className="w-4 h-4 text-[#836EF9]" />
+              <span className="text-xs font-extrabold uppercase tracking-wider text-neutral-300">
+                Milestone Specifications
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleAutoFill}
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 active:scale-95 border ${
+                isAutoFilled
+                  ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.4)]"
+                  : "bg-[#836EF9]/10 hover:bg-[#836EF9]/25 text-[#836EF9] hover:text-white border-[#836EF9]/30 hover:border-[#836EF9] shadow-[0_0_12px_rgba(131,110,249,0.2)] hover:shadow-[0_0_20px_rgba(131,110,249,0.45)]"
+              }`}
+              title="Populate form with pre-configured hackathon demo data"
+            >
+              <Zap className={`w-3.5 h-3.5 fill-current ${isAutoFilled ? "text-emerald-400" : "text-cyan-400"}`} />
+              <span>{isAutoFilled ? "✓ Demo Data Loaded" : "⚡ Quick Fill Demo"}</span>
+            </button>
+          </div>
+
           {/* Project Title */}
           <div className="space-y-1.5">
             <label className="text-xs font-extrabold uppercase tracking-wider text-neutral-300">
@@ -129,10 +172,10 @@ export default function CreateEscrowPage() {
               </label>
               <input
                 type="number"
-                step="0.001"
-                min="0.001"
+                step="any"
+                min="0.000001"
                 required
-                placeholder="0.25"
+                placeholder="0.0001"
                 value={formData.amountEth}
                 onChange={(e) => setFormData({ ...formData, amountEth: e.target.value })}
                 className="w-full px-4 py-3 rounded-2xl border border-white/10 bg-neutral-950/80 text-white text-sm font-mono focus:outline-none focus:border-[#836EF9] focus:shadow-[0_0_15px_rgba(131,110,249,0.3)] transition-all"
